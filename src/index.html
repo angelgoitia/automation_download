@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <meta
+      http-equiv="X-Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
+    <meta charset="UTF-8">
+    <title>Formulario</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+    <div class="card">
+        <h1>Formulario de Solicitud</h1>
+        <form class="row g-3">
+            <div class="col-6">
+                <label class="col-form-label">Número de Registro</label>
+                <input type="text" class="form-control" id="record" required>
+            </div>
+
+            <div class="col-6">
+                <label class="col-form-label">Cantidad de solicitud de Descarga</label>
+                <input class="form-control" type="number" id="download" required>
+            </div>
+
+            <label class="col-form-label col-12">Tiempo de Ejecución:</label>
+
+            <div class="col-12 mt-0">
+                <div class="row">
+                    <div class="col-6">
+                        <label class="col-form-label col-12">Desde:</label>
+                        <div class="form-group row">
+                            <div class="col-4">
+                              <select class="form-control" id="since-hour"></select>
+                            </div>
+                            <div class="col-4">
+                              <select class="form-control" id="since-minutes"></select>
+                            </div>
+                            <div class="col-4">
+                              <select class="form-control" id="since-am-pm">
+                                <option value="AM" selected>AM</option>
+                                <option value="PM">PM</option>
+                              </select>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <div class="col-6">
+                        <label class="col-form-label col-12">Hasta:</label>
+                        <div class="form-group row">
+                            <div class="col-4">
+                              <select class="form-control" id="until-hour"></select>
+                            </div>
+                            <div class="col-4">
+                              <select class="form-control" id="until-minutes"></select>
+                            </div>
+                            <div class="col-4">
+                              <select class="form-control" id="until-am-pm">
+                                <option value="AM">AM</option>
+                                <option value="PM" selected>PM</option>
+                              </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <label for="formFile" class="form-label">Directorio de Guardado</label>
+                <div class="row">
+                    <div class="col-8">
+                        <input type="text" class="form-control" id="directory" readonly>
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="" id="selectDirectory">Seleccionar</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 mt-4 d-flex justify-content-center"><button type="submit" class="btnSubmit">Ejecutar</button></div>
+        </form>
+    </div>
+    <script type="text/javascript" src="../node_modules/jquery/dist/jquery.min.js"></script>
+    <script defer src="./js/bootstrap.bundle.min.js"></script>
+    <script defer src="./js/index.js"></script>
+</body>
+</html>
