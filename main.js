@@ -1,29 +1,36 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain  } = require('electron')
+const path = require('path');
 const { dialog } = require('electron')
 
 const createWindow = () => {
-    const win = new BrowserWindow({
+    const mainWindow  = new BrowserWindow({
         width: 800,
         height: 600,
         minWidth: 600,
-        minHeight: 600
+        minHeight: 600,
+        webPreferences: {
+          preload: path.join(__dirname, 'src/js/preload.js')
+        }
     })
 
-    win.loadFile('src/index.html')
+    ipcMain.on('open-directory', (event) => {
+      selectFolder(event)
+    })
 
-   /*  win.on('closed', function () {
-        win = null;
-    }); */
+    mainWindow.loadFile('src/index.html')
 }
 
 app.whenReady().then(() => {
   createWindow()
-  selectFolder()
 })
 
 
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') app.quit()
+})
 
-function selectFolder() {
+
+function selectFolder(event) {
     dialog.showOpenDialog({
       properties: ['openDirectory']
     }).then(result => {
@@ -32,7 +39,7 @@ function selectFolder() {
         // result.filePaths contendrá un array de las rutas de las carpetas seleccionadas
         const folderPath = result.filePaths[0]
         console.log('Ruta seleccionada:', folderPath)
-        //document.getElementById('directory').value = folderPath;
+        event.sender.send('folder-selected', folderPath);
       } else {
         console.log('Selección de carpeta cancelada por el usuario.')
       }

@@ -26,6 +26,11 @@ $(document).ready(function () {
         console.log('Cantidad de Descarga:', download_count);
     });
 
+    $("#selectDirectory").click(function (e) { 
+        e.preventDefault();
+        window.electronAPI.openDirectory()
+    });
+
 });
 
 function generateOptions(selectId, inicio, fin) {
@@ -38,3 +43,9 @@ function generateOptions(selectId, inicio, fin) {
         select.append(option);
     }
 }
+// Maneja el resultado recibido desde el proceso principal
+window.addEventListener('folder-selected', function(event) {
+    // Obtiene el resultado desde el evento
+    var folderPath = event.detail;
+    $("#directory").val(folderPath);
+});
