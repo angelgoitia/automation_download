@@ -26,23 +26,6 @@ $(document).ready(function () {
         console.log('Cantidad de Descarga:', download_count);
     });
 
-    $('#selectDirectory').click(function() {
-        const inputDirectory = $('#directory');
-        
-        window.showDirectoryPicker()
-            .then(directoryHandle => {
-                console.log(directoryHandle)
-                const directory = directoryHandle.name;
-                const url = new URL(directory, 'file:///');
-                const fullPath = url.pathname;
-                console.log("directory "+directory)
-                console.log("url "+url)
-                inputDirectory.val(fullPath);
-            })
-            .catch(err => {
-                console.error('Error al seleccionar el directorio:', err);
-            });
-    });
 });
 
 function generateOptions(selectId, inicio, fin) {
