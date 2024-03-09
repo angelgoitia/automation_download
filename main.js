@@ -1,6 +1,7 @@
-const { app, BrowserWindow, ipcMain  } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog  } = require('electron');
 const path = require('path');
-const { dialog } = require('electron')
+const pdf2image = require('pdf2image');
+const Tesseract = require('tesseract.js');
 
 const createWindow = () => {
     const mainWindow  = new BrowserWindow({
@@ -21,7 +22,8 @@ const createWindow = () => {
 }
 
 app.whenReady().then(() => {
-  createWindow()
+  //createWindow()
+  readFile();
 })
 
 
@@ -46,4 +48,22 @@ function selectFolder(event) {
     }).catch(err => {
       console.log('Error al mostrar el cuadro de diálogo:', err)
     })
+}
+
+
+async function readFile(){
+  const filePath = 'file/SR_VILLABLANCA23_ESCALERA23_3.pdf';
+
+  const options = {
+    outputType: 'jpeg',
+    page:1,
+  };
+
+  try {
+    const imagePaths = await pdf2image.convertPDF(filePath, options);
+    console.log('Imágenes generadas:', imagePaths);
+  } catch (error) {
+    console.error('Error al convertir PDF a imagen:', error);
+  }
+ 
 }
