@@ -19,8 +19,6 @@
   },
   "dependencies": {
     "@electron/remote": "^2.1.2",
-    "jquery": "^3.7.1",
-    "pdf2image": "^1.2.3",
-    "tesseract.js": "^5.0.5"
+    "jquery": "^3.7.1"
   }
 }

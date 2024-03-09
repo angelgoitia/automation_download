@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain, dialog  } = require('electron');
 const path = require('path');
-const pdf2image = require('pdf2image');
-const Tesseract = require('tesseract.js');
+const fs = require('fs');
 
 const createWindow = () => {
     const mainWindow  = new BrowserWindow({
@@ -23,7 +22,7 @@ const createWindow = () => {
 
 app.whenReady().then(() => {
   //createWindow()
-  readFile();
+  infoFile();
 })
 
 
@@ -50,20 +49,29 @@ function selectFolder(event) {
     })
 }
 
+function infoFile(){
+  const filePath = 'D:/angel/Documentos/Maria/archivos/29villablanca23_3_3B_URGE/SR_VILLABLANCA23_ESCALERA23_3.pdf';
+  fs.stat(filePath, (err, stats) => {
+    if (err) {
+      console.error('Error al obtener la fecha de creación del archivo:', err);
+    } else {
+      console.log('Fecha de creación del archivo:', stats.birthtime);
+      checkTime(stats.birthtime);
+    }
+  });
 
-async function readFile(){
-  const filePath = 'file/SR_VILLABLANCA23_ESCALERA23_3.pdf';
 
-  const options = {
-    outputType: 'jpeg',
-    page:1,
-  };
+}
 
-  try {
-    const imagePaths = await pdf2image.convertPDF(filePath, options);
-    console.log('Imágenes generadas:', imagePaths);
-  } catch (error) {
-    console.error('Error al convertir PDF a imagen:', error);
+function checkTime(dateFile){
+  const currentDate = new Date();
+
+  const uploadedDate = new Date(dateFile);
+  const timeDifference = currentDate.getTime() - uploadedDate.getTime();
+  const hoursDifference = timeDifference / 3600000;
+  if (hoursDifference > 48) {
+    console.log('Han pasado más de 48 horas.');
+  } else {
+    console.log('No han pasado más de 48 horas.');
   }
- 
 }
