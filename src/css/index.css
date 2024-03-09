@@ -32,3 +32,15 @@ body{background-color: var(--color-primary);}
 }
 
 .card .btnSubmit{font-weight: 600;}
+
+.form-switch .form-check-input{width: 15px; margin-left: 0px; margin-right: 10px;}
+
+.form-check-input:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.inputFile {
+    cursor: pointer;
+    opacity: 0.6;
+}

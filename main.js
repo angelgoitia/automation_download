@@ -9,8 +9,13 @@ const createWindow = () => {
         minWidth: 600,
         minHeight: 600,
         webPreferences: {
+          webviewTag: true,
           preload: path.join(__dirname, 'src/js/preload.js')
         }
+    })
+
+    ipcMain.on('download-demo', (event) => {
+      downloadDemo(event)
     })
 
     ipcMain.on('open-directory', (event) => {
@@ -21,14 +26,32 @@ const createWindow = () => {
 }
 
 app.whenReady().then(() => {
-  //createWindow()
-  infoFile();
+  createWindow()
+  //infoFile();
 })
 
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })
+
+function downloadDemo() {
+  const filePath = 'file/demo.xlsx';
+
+  dialog.showSaveDialog({ defaultPath: 'demo.xlsx' }).then(result => {
+    if (!result.canceled) {
+      const destination = result.filePath;
+
+      fs.copyFile(filePath, destination, err => {
+        if (err) {
+          console.error('Error al copiar el archivo:', err);
+        } else {
+          console.log('Archivo descargado exitosamente.');
+        }
+      });
+    }
+  });
+}
 
 
 function selectFolder(event) {

@@ -1,51 +1,122 @@
+let optionForm = 1;
+let urlWebsite = 'https://gestiona.comunidad.madrid/reee_etiqueta/showBuscadorEtiqueta.jsf';
+var form_data;
+
 $(document).ready(function () {
-    generateOptions('since-hour', 1, 12);
-    generateOptions('since-minutes', 0, 59);
-    generateOptions('until-hour', 1, 12);
-    generateOptions('until-minutes', 0, 59);
 
     $('form').submit(function (event) {
         event.preventDefault(); 
-        
-        const record = $('#record').val();
-        const since_hour = $('#since-hour').val();
-        const since_minutes = $('#since-minutes').val();
-        const since_am_pm = $('#since-am-p').val();
+        form_data = new FormData(document.querySelector("form"));
 
-        const until_hour = $('#until-hour').val();
-        const until_minutes = $('#until-minutes').val();
-        const until_am_pm = $('#until-am-p').val();
-        
-        const time_since = since_hour + ":" + since_minutes+" "+since_am_pm;
-        const time_until = until_hour + ":" + until_minutes+" "+until_am_pm;
+        if(optionForm == 1){
+            if(!form_data.get("record") || !form_data.get("name_file") || !form_data.get("directory"))
+            {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Debe completar todos los campos",
+                });
+                return false;
+	        }else{
+                $('#iframe_website').removeAttr('src');
+                $('#iframe_website').attr('src', urlWebsite);
+            }
+        }else{
+            if(!form_data.get("formFile") || !form_data.get("directory_2"))
+            {
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "Debe completar todos los campos",
+                });
+                return false;
+	        }else{
+                $('#iframe_website').removeAttr('src');
+                $('#iframe_website').attr('src', urlWebsite);
+            }
+        }
 
-        const download_count = $('#download').val();
 
-        console.log('Número de Registro:', record);
-        console.log('Tiempo de Ejecución:'+ time_since +" - "+time_until);
-        console.log('Cantidad de Descarga:', download_count);
     });
 
-    $("#selectDirectory").click(function (e) { 
+    $(".selectDirectory, .inputFile").click(function (e) { 
         e.preventDefault();
+        // Send request to node
         window.electronAPI.openDirectory()
     });
 
+    $('.form-check-input').change(function() {
+        $("input").val("");
+        $('#iframe_website').removeAttr('src');
+        $(".formOptions").addClass("d-none");
+        optionForm = $(this).val();
+        if(optionForm == 1){
+            $(".formIndividual").removeClass("d-none");
+        }else{
+            $(".formMultiple").removeClass("d-none");
+        }
+    });
+
+    $(".downloadDemo").click(function (e) { 
+        e.preventDefault();
+        // Send request to node
+        window.electronAPI.downloadDemo()
+    });
+
 });
 
-function generateOptions(selectId, inicio, fin) {
-    const select = $('#' + selectId);
-    select.empty();
-
-    for (let i = inicio; i <= fin; i++) {
-        const optionValue = i < 10 ? '0' + i : i.toString();
-        const option = $('<option>').val(optionValue).text(optionValue);
-        select.append(option);
-    }
-}
-// Maneja el resultado recibido desde el proceso principal
+// Handle the result received from the main process
 window.addEventListener('folder-selected', function(event) {
-    // Obtiene el resultado desde el evento
+    // Get the result from the event
     var folderPath = event.detail;
-    $("#directory").val(folderPath);
+    if(optionForm == 1){
+        $("#directory").val(folderPath);
+    }else{
+        $("#directory_2").val(folderPath);
+    }
 });
+
+const webview = document.querySelector('#iframe_website');
+
+webview.addEventListener("did-start-loading", () =>{
+    console.log("did-start-loading")
+})
+
+let urlImg = "";
+
+webview.addEventListener("did-stop-loading", () =>{
+    console.log("did-stop-loading");
+    urlImg = "";
+    if(optionForm == 1){
+        webview.executeJavaScript(`
+            const input = document.getElementById('buscadorForm:idEregRefdocum');
+            input.value = '` + form_data.get("record") +`';
+        `);
+
+        // Captura la imagen del contenido del webview
+        var iframeDocument = document.getElementById('myIframe').contentDocument;
+        html2canvas(iframeDocument.body).then(canvas => {
+            // Convierte el canvas en una URL de imagen
+            const imgData = canvas.toDataURL();
+            
+            // Muestra el swal.fire con la imagen capturada
+            Swal.fire({
+                title: 'Imagen capturada',
+                imageUrl: imgData,
+                imageAlt: 'Captura de pantalla',
+                showCancelButton: true,
+                confirmButtonText: 'Aceptar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Acción a realizar si se confirma la captura
+                } else if (result.dismiss === Swal.DismissReason.cancel) {
+                    // Acción a realizar si se cancela la captura
+                }
+            });
+        });
+    }else{
+
+    }
+
+})
